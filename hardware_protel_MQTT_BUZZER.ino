@@ -9,7 +9,6 @@
 #include <Adafruit_ADS1X15.h>
 #include <WiFiManager.h>
 
-// ---------- KONFIGURASI ----------
 const char* server_mqtt = "20.5.160.109";
 const char* topik_mqtt = "sensor/data/csv_raw";
 String id_sensor = "SENSOR001";
@@ -17,29 +16,29 @@ String id_sensor = "SENSOR001";
 WiFiClient klien_esp;
 PubSubClient klien_mqtt(klien_esp);
 
-// ---------- PIN & INISIALISASI SENSOR ----------
+//MAX6675
 #define pin_cs_max6675        15
 #define pin_clk_max6675       14
 #define pin_miso_max6675      12
 MAX6675 thermoCouple(pin_cs_max6675, pin_miso_max6675, pin_clk_max6675);
-
+//SD CARD
 #define pin_cs_sd             5
 #define pin_mosi_sd           23
 #define pin_miso_sd           19
 #define pin_clk_sd            18
 SPIClass spi_sd(VSPI);
-
+//RTC
 #define pin_sda_i2c           21
 #define pin_scl_i2c           22
 TwoWire kabel_rtc(0);
 RTC_DS3231 rtc;
-
+//gps
 #define pin_rx_gps            17
 #define pin_tx_gps            16
 #define baud_gps              9600
 HardwareSerial serial_gps(2);
 TinyGPSPlus gps;
-
+//PIN LAIN
 #define pin_kelembaban        35
 #define pin_pemicu_log        27
 #define pin_pemicu_kirim      26
@@ -58,7 +57,7 @@ int readIndex_ph = 0;
 float total_ph = 0;
 float nilai_ph_stabil = 0.0;
 
-// ---------- KALIBRASI DAN VARIABEL ----------
+//KALIBRASI
 const int nilai_kering = 2923;
 const int nilai_basah = 1104;
 const float tegangan_baterai_penuh = 4.2;
@@ -75,16 +74,26 @@ unsigned long jeda_debounce = 50;
 unsigned long waktu_terakhir_cek_baterai = 0;
 const unsigned long interval_cek_baterai = 100;
 
-// ---------- FUNGSI ----------
 void perbarui_led_baterai(int persen) {
   digitalWrite(pin_led_baterai_rendah, persen < 50);
   digitalWrite(pin_led_baterai_penuh, persen >= 50);
 }
-void bunyikan_sekali() { digitalWrite(pin_buzzer, HIGH); delay(150); digitalWrite(pin_buzzer, LOW); }
-void bunyikan_error()  { digitalWrite(pin_buzzer, HIGH); delay(500); digitalWrite(pin_buzzer, LOW); }
+void bunyikan_sekali() { 
+  digitalWrite(pin_buzzer, HIGH); 
+  delay(150); 
+  digitalWrite(pin_buzzer, LOW); 
+  }
+void bunyikan_error()  { 
+  digitalWrite(pin_buzzer, HIGH); 
+  delay(500); 
+  digitalWrite(pin_buzzer, LOW);
+  }
 void bunyikan_dua_kali() {
   for (int i = 0; i < 2; i++) {
-    digitalWrite(pin_buzzer, HIGH); delay(100); digitalWrite(pin_buzzer, LOW); delay(100);
+    digitalWrite(pin_buzzer, HIGH); 
+    delay(100); 
+    digitalWrite(pin_buzzer, LOW); 
+    delay(100);
   }
 }
 void bunyikan_sinkronisasi_selesai() {
@@ -207,7 +216,6 @@ void kirim_csv_ke_mqtt() {
   } else Serial.println("Sebagian data gagal terkirim.");
 }
 
-// ---------- SETUP ----------
 void setup() {
   delay(100);
   Serial.begin(115200);
