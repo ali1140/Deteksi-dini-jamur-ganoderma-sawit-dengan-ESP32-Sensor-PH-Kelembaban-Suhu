@@ -9,7 +9,7 @@
 ## Deskripsi Sistem
 Sistem Embedded dan Internet of Things (IoT) ini dirancang menggunakan mikrokontroler **ESP32** untuk melakukan deteksi dini terhadap serangan jamur patogen *Ganoderma boninense* pada perkebunan kelapa sawit. Perangkat keras beroperasi secara portabel sebagai *datalogger* untuk mengukur parameter lingkungan secara *real-time* tepat di titik lokasi pengambilan sampel.
 
-![Skema Perangkat](screenshot.png)
+![Skema Perangkat](assets/Desain%20Hardware_page1_1.jpeg)
 
 ## Fitur Utama
 - **Pengukuran Suhu & Kelembaban**: Memanfaatkan sensor *Thermocouple* MAX6675 untuk akurasi suhu tinggi dan sensor analog untuk kelembaban tanah.
