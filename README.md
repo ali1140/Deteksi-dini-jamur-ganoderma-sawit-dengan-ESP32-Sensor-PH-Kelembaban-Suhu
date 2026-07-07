@@ -78,5 +78,14 @@ Untuk melakukan kompilasi kode sumber (*firmware*) ESP32 pada *Arduino IDE*, pus
 2. **Akuisisi Data Lapangan (Pin 27)**: Tekan tombol **Log**. Sistem akan membaca nilai dari seluruh sensor, mencatat koordinat GPS, serta stempel waktu, dan menyimpannya (append) ke dalam file `log.csv` pada SD Card. Modul Buzzer akan memberikan *feedback* audio satu kali.
 3. **Sinkronisasi Server (Pin 26)**: Saat berada di area dengan jangkauan internet, tekan tombol **Kirim**. ESP32 akan memproses seluruh isi `log.csv` dan mengunggahnya baris demi baris via MQTT. Jika transmisi berhasil diselesaikan (100%), *log file* pada SD Card akan dikosongkan dan Buzzer akan membunyikan melodi sinkronisasi komplit.
 
+## Kontributor & Peran
+**Ali Akbar Alhabsyi (ali1140)**
+Repositori ini difokuskan pada sistem *embedded*. Dalam pengembangan sistem terintegrasi SAKTI ini, peran saya secara khusus berfokus pada pengembangan dan rekayasa perangkat keras (*Hardware & Embedded System Developer*), yang mencakup:
+- **Perancangan Rangkaian Elektrik (Circuit Design)**
+- **Penyolderan Komponen dan Perakitan Fisik (Soldering & Assembly)**
+- **Pemrograman Perangkat Keras (Hardware Programming - ESP32)**
+- **Kalibrasi Sensor (pH, Suhu, Kelembaban)**
+- **Akuisisi Data Lapangan (Data Acquisition)**
+
 ---
 *Dokumentasi disusun berdasarkan Laporan Proyek Telematika (2025).*
