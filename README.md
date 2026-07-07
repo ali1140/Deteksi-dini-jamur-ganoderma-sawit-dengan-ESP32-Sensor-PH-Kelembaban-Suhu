@@ -51,8 +51,7 @@ Titik-titik pohon yang terindikasi sakit di peta akan dikunjungi oleh petugas la
 Struktur tongkat dirancang ergonomis dengan ujung *stainless steel* runcing untuk penetrasi tanah, serta dilengkapi mekanisme per (*spring damper*) untuk meredam kejut mekanis saat ditancapkan ke tanah keras.
 
 <div align="center">
-  <img src="assets/Deskripsi%20Produk_page8_18.jpeg" width="300" alt="Bentuk Fisik Tongkat SAKTI">
-  <img src="assets/Deskripsi%20Produk_page9_19.jpeg" width="300" alt="Detail Perangkat Tongkat SAKTI">
+  <img src="assets/tongkat_utuh.png" width="300" alt="Bentuk Fisik Utuh Tongkat SAKTI">
 </div>
 
 **Komponen Elektronik:**
