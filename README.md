@@ -1,6 +1,6 @@
 <div align="center">
 
-# SAKTI: Sistem Deteksi Dini Ganoderma pada Tanah Perkebunan Sawit berbasis IoT
+# SAKTI: Sistem Analisis Kelapa sawit Terintegrasi IoT
 
 [![Hardware](https://img.shields.io/badge/Hardware-ESP32_%7C_Drone-blue.svg)]()
 [![Machine Learning](https://img.shields.io/badge/ML-YOLOv8L_%7C_Random_Forest-orange.svg)]()
@@ -49,6 +49,11 @@ Titik-titik pohon yang terindikasi sakit di peta akan dikunjungi oleh petugas la
 
 ## Spesifikasi Perangkat Keras (Tongkat SAKTI)
 Struktur tongkat dirancang ergonomis dengan ujung *stainless steel* runcing untuk penetrasi tanah, serta dilengkapi mekanisme per (*spring damper*) untuk meredam kejut mekanis saat ditancapkan ke tanah keras.
+
+<div align="center">
+  <img src="assets/Deskripsi%20Produk_page8_18.jpeg" width="300" alt="Bentuk Fisik Tongkat SAKTI">
+  <img src="assets/Deskripsi%20Produk_page9_19.jpeg" width="300" alt="Detail Perangkat Tongkat SAKTI">
+</div>
 
 **Komponen Elektronik:**
 - Mikrokontroler: **ESP32** (Wi-Fi Enabled)

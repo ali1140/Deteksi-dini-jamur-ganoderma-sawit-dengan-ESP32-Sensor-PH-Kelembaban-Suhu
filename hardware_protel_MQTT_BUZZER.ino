@@ -9,7 +9,7 @@
 #include <Adafruit_ADS1X15.h>
 #include <WiFiManager.h>
 
-const char* server_mqtt = "20.5.160.109";
+const char* server_mqtt = "YOUR_MQTT_BROKER_IP";
 const char* topik_mqtt = "sensor/data/csv_raw";
 String id_sensor = "SENSOR001";
 
