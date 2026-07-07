@@ -1,51 +1,78 @@
-# Alat Deteksi Dini Jamur Ganoderma pada Kelapa Sawit (IoT)
+<div align="center">
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Board-ESP32-blue" alt="ESP32">
-  <img src="https://img.shields.io/badge/Protocol-MQTT-orange" alt="MQTT">
-  <img src="https://img.shields.io/badge/Language-C++_(Arduino)-green" alt="C++">
-</p>
+# SAKTI: Sistem Deteksi Dini Ganoderma pada Tanah Perkebunan Sawit berbasis IoT
 
-## Deskripsi Sistem
-Sistem Embedded dan Internet of Things (IoT) ini dirancang menggunakan mikrokontroler **ESP32** untuk melakukan deteksi dini terhadap serangan jamur patogen *Ganoderma boninense* pada perkebunan kelapa sawit. Perangkat keras beroperasi secara portabel sebagai *datalogger* untuk mengukur parameter lingkungan secara *real-time* tepat di titik lokasi pengambilan sampel.
+[![Hardware](https://img.shields.io/badge/Hardware-ESP32_%7C_Drone-blue.svg)]()
+[![Machine Learning](https://img.shields.io/badge/ML-YOLOv8L_%7C_Random_Forest-orange.svg)]()
+[![IoT](https://img.shields.io/badge/IoT-MQTT_%7C_PWA-green.svg)]()
 
-![Skema Perangkat](assets/Desain%20Hardware_page1_1.jpeg)
+<img src="assets/Desain%20Hardware_page1_1.jpeg" width="400" alt="Skema Perangkat SAKTI">
+</div>
 
-## Fitur Utama
-- **Pengukuran Suhu & Kelembaban**: Memanfaatkan sensor *Thermocouple* MAX6675 untuk akurasi suhu tinggi dan sensor analog untuk kelembaban tanah.
-- **Pengukuran pH Tanah**: Menggunakan sensor pH analog yang dikonversi melalui modul **ADS1115 (16-bit ADC)** untuk menjamin presisi pembacaan data.
-- **Perekaman Lokasi Geografis (GPS) & Waktu**: Terintegrasi dengan modul GPS dan RTC (DS3231) sehingga setiap rekaman data memiliki presisi titik koordinat (latitude, longitude) serta stempel waktu (*timestamp*) yang valid.
-- **Sistem Komunikasi MQTT (Online/Offline)**:
-  - **Mode Online**: Mengirimkan data pembacaan sensor secara langsung ke broker MQTT (`20.5.160.109`) melalui topik `sensor/data/csv_raw`.
-  - **Mode Offline (Datalogger)**: Jika perangkat berada di area tanpa jangkauan jaringan nirkabel, sistem secara otomatis menyimpan data pengukuran ke dalam **SD Card** (`log.csv`). Ketika koneksi nirkabel kembali tersedia, perangkat dapat melakukan sinkronisasi dengan mengirimkan seluruh *log* data tersebut secara *batch*.
-- **Konfigurasi Jaringan Nirkabel Otomatis**: Dilengkapi dengan sistem *WiFiManager* sehingga pengguna tidak perlu melakukan penyesuaian kredensial WiFi di dalam kode (*hardcode*). Jika gagal terhubung, ESP32 akan memancarkan *Access Point* konfigurasi mandiri dengan SSID **"SAKTI"**.
-- **Manajemen Daya**: Sistem memantau kapasitas baterai secara berkelanjutan serta memberikan indikator visual (LED) dan indikator audio (Buzzer) sebagai respons terhadap setiap interaksi atau peringatan sistem.
+---
 
-## Perangkat Keras (Hardware)
-- Mikrokontroler: **ESP32**
-- Modul Tambahan: Modul SD Card (SPI), RTC DS3231 (I2C), Modul GPS (UART), Indikator Buzzer & LED
-- Spesifikasi Sensor: 
-  - Temperatur: **MAX6675**
-  - Kelembaban Tanah: Analog Moisture Sensor
-  - Keasaman Tanah: Analog pH Sensor + **ADS1115**
+## Deskripsi Sistem Terintegrasi
+Proyek **SAKTI** adalah Sistem Embedded dan Internet of Things (IoT) berskala penuh yang dirancang untuk melakukan deteksi dini terhadap serangan jamur patogen mematikan *Ganoderma boninense* (penyebab penyakit Busuk Pangkal Batang/BPB) pada perkebunan kelapa sawit. 
 
-## Dependensi Perangkat Lunak
-Untuk melakukan kompilasi kode sumber, pastikan *library* berikut terinstal pada lingkungan pengembangan (Arduino IDE):
+Pendekatan reaktif yang mengandalkan inspeksi visual seringkali terlambat karena infeksi internal sudah parah saat gejala fisik muncul. Oleh karena itu, sistem SAKTI mengkorelasikan dua sumber data utama:
+1. **Pemindaian Udara (Computer Vision):** Menggunakan Drone DJI Mini 4 Pro untuk pemetaan georeferensial dan identifikasi awal gejala stres pada daun (pucuk menguning) dari atas.
+2. **Pemindaian Tanah (IoT Datalogger):** Menggunakan instrumen fisik portabel berupa **"Tongkat SAKTI"** berbasis mikrokontroler ESP32 untuk memvalidasi kondisi lingkungan tanah di titik koordinat yang dicurigai.
+
+---
+
+## Arsitektur dan Alur Kerja Sistem
+Sistem SAKTI mengimplementasikan arsitektur *edge-to-cloud* yang terdiri dari tiga komponen komputasi utama:
+
+### 1. Akuisisi Citra Udara (Drone & YOLOv8L)
+- **Pemetaan Udara:** Drone otonom melakukan pemetaan (*mapping*) area perkebunan. Resolusi spasial tinggi (GSD 4 cm/piksel) digunakan untuk menjamin ketajaman visualisasi daun.
+- **Deteksi & Klasifikasi:** Citra disatukan menjadi *orthomosaic*. Model **YOLOv8L** (You Only Look Once) digunakan untuk dua tahap deteksi:
+  - Mengidentifikasi, menghitung populasi, dan memberikan ID unik pada setiap pohon kelapa sawit (mAP50: 95.7%).
+  - Mengklasifikasikan daun yang menguning akibat gejala penyakit BPB.
+- **Georeferencing:** Proses pemberian referensi geografi sehingga setiap pohon yang terdeteksi sakit akan ditandai dalam peta digital.
+
+### 2. Akuisisi Data Tanah (Tongkat SAKTI)
+Titik-titik pohon yang terindikasi sakit di peta akan dikunjungi oleh petugas lapangan untuk diinspeksi tanahnya menggunakan **Tongkat SAKTI**.
+- **Sensor:** Merekam suhu tanah (MAX6675), kelembaban (Analog), dan tingkat keasaman/pH (ADS1115 16-bit ADC) secara presisi.
+- **Lokasi & Waktu:** Dilengkapi GPS dan RTC (DS3231) untuk memastikan setiap sampel pengukuran memiliki koordinat lintang/bujur dan *timestamp* yang valid.
+- **Mode Operasional:**
+  - **Offline:** Di area perkebunan *blank spot*, data disimpan secara lokal pada modul Micro SD Card berformat `log.csv`.
+  - **Online:** Ketika perangkat terhubung dengan jaringan internet via *WiFiManager*, data akan disinkronisasi (*batch upload*) melalui protokol **MQTT** (Broker NanoMQ) ke server pusat.
+
+### 3. Analisis Machine Learning dan Aplikasi Web (PWA)
+- **Model Random Forest:** Data CSV dari Tongkat SAKTI dikirim ke *cloud* dan diproses oleh algoritma *Random Forest Classifier* untuk mengklasifikasikan risiko kemunculan jamur Ganoderma berdasarkan kondisi asam/suhu/kelembaban tanah. Korelasi antara data visual daun (Drone) dan data tanah aktual (IoT) memberikan konfirmasi diagnostik akhir.
+- **Progressive Web App (PWA):** Hasil analisis disajikan melalui antarmuka *dashboard* berbasis PWA yang modern. 
+  - Mendukung fungsionalitas *offline-first* dengan *Service Worker* (Caching aset dan API jaringan lokal).
+  - Menampilkan visualisasi peta lahan (GeoTIFF) terintegrasi dengan zona risiko (*overlay* titik pohon sehat dan sakit).
+  - Menyediakan manajemen perangkat IoT jarak jauh (*Online/Offline status*, *Last update*).
+
+---
+
+## Spesifikasi Perangkat Keras (Tongkat SAKTI)
+Struktur tongkat dirancang ergonomis dengan ujung *stainless steel* runcing untuk penetrasi tanah, serta dilengkapi mekanisme per (*spring damper*) untuk meredam kejut mekanis saat ditancapkan ke tanah keras.
+
+**Komponen Elektronik:**
+- Mikrokontroler: **ESP32** (Wi-Fi Enabled)
+- Penyimpanan & Waktu: Modul SD Card (SPI), RTC DS3231 (I2C)
+- Navigasi: Modul GPS (UART)
+- Sensor Suhu: **MAX6675** (Thermocouple)
+- Sensor Kelembaban: Analog Soil Moisture Sensor
+- Sensor pH Tanah: Analog pH Sensor + Modul **ADS1115** (ADC)
+- Indikator: Buzzer Auditori & LED Baterai/Status Jaringan
+
+## Dependensi Perangkat Lunak (Embedded System)
+Untuk melakukan kompilasi kode sumber (*firmware*) ESP32 pada *Arduino IDE*, pustaka (*library*) berikut harus diinstal:
 - `MAX6675.h`
 - `SD.h`, `SPI.h`, `Wire.h`
 - `RTClib` (oleh Adafruit)
 - `TinyGPSPlus`
-- `PubSubClient`
+- `PubSubClient` (Klien MQTT)
 - `Adafruit_ADS1X15`
 - `WiFiManager`
 
-## Panduan Penggunaan Perangkat
-1. **Inisialisasi**: Hidupkan perangkat. ESP32 akan melakukan inisialisasi sensor dan mencoba terhubung ke profil WiFi terakhir yang tersimpan. Jika koneksi gagal, sistem akan otomatis beralih ke Mode Offline.
-2. **Pengambilan Data (Log)**: Tekan tombol *Log* (Pin 27) untuk memulai pembacaan sensor, koordinat GPS, dan waktu. Sistem akan memvalidasi data dan menyimpannya dalam format CSV ke dalam SD Card. Buzzer akan memberikan konfirmasi satu kali.
-3. **Pengiriman Data (Sinkronisasi)**: Saat perangkat terhubung dengan jaringan internet, tekan tombol *Kirim* (Pin 26). ESP32 akan memproses seluruh isi file `log.csv` dan mengunggahnya secara sekuensial ke server melalui protokol MQTT. Setelah konfirmasi pengiriman berhasil, penyimpanan lokal akan dikosongkan dan buzzer akan memberikan sinyal konfirmasi sinkronisasi berhasil.
-
-## Kontributor
-- **ali1140** - *Developer Utama*
+## Panduan Pengoperasian Alat (Datalogger)
+1. **Inisialisasi Sistem**: Hidupkan perangkat. ESP32 akan melakukan inisialisasi modul dan mencoba menyambung ke jaringan Wi-Fi tersimpan. Jika gagal, indikator LED Wi-Fi akan padam dan sistem masuk ke Mode Offline secara otomatis.
+2. **Akuisisi Data Lapangan (Pin 27)**: Tekan tombol **Log**. Sistem akan membaca nilai dari seluruh sensor, mencatat koordinat GPS, serta stempel waktu, dan menyimpannya (append) ke dalam file `log.csv` pada SD Card. Modul Buzzer akan memberikan *feedback* audio satu kali.
+3. **Sinkronisasi Server (Pin 26)**: Saat berada di area dengan jangkauan internet, tekan tombol **Kirim**. ESP32 akan memproses seluruh isi `log.csv` dan mengunggahnya baris demi baris via MQTT. Jika transmisi berhasil diselesaikan (100%), *log file* pada SD Card akan dikosongkan dan Buzzer akan membunyikan melodi sinkronisasi komplit.
 
 ---
-*Dokumentasi ini disusun untuk memberikan tinjauan teknis mengenai arsitektur sistem deteksi dini Ganoderma.*
+*Dokumentasi disusun berdasarkan Laporan Proyek Telematika (2025).*
